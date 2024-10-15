@@ -13,17 +13,14 @@ exports.addUser = async (req, res) => {
   res.json(user);
 };
 
-// Claim points for a user
 exports.claimPoints = async (req, res) => {
   const { userId } = req.body;
   const points = Math.floor(Math.random() * 10) + 1;
 
-  // Update user's total points
   const user = await User.findById(userId);
   user.totalPoints += points;
   await user.save();
 
-  // Claim in history
   const claimHistory = new ClaimHistory({ userId, pointsAwarded: points });
   await claimHistory.save();
 
