@@ -42,18 +42,34 @@ export default function EnhancedLeaderboard() {
     }
   };
 
-  const handleClaimPoints = async () => {
-    if (!selectedUser) return;
+  const handleClaimPoints = useCallback(async () => {
+    if (!selectedUser || isClaiming) return;
+
+    setIsClaiming(true);
     try {
-      const res = await axios.post(`${API_BASE_URL}/claim`, {
-        userId: selectedUser,
+      const response = await fetch('/api/claim-points', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId: selectedUser }),
       });
-      setPoints(res.data.points);
-      fetchLeaderboard();
+
+      if (!response.ok) throw new Error('Failed to claim points');
+
+      const { points, user } = await response.json();
+      
+      // Optimistic update
+      setUsers(prevUsers => prevUsers.map(u => 
+        u.id === user.id ? { ...u, totalPoints: user.totalPoints } : u
+      ));
+
+      toast.success(`Claimed ${points} points successfully!`);
     } catch (error) {
-      console.error("Error claiming points:", error);
+      console.error('Error claiming points:', error);
+      toast.error('Failed to claim points. Please try again.');
+    } finally {
+      setIsClaiming(false);
     }
-  };
+  }, [selectedUser, isClaiming]);
 
   const handleAddUser = async () => {
     if (!newUser.trim()) return;
