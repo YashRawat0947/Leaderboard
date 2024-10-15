@@ -10,7 +10,7 @@ export default function EnhancedLeaderboard() {
   const [newUser, setNewUser] = useState('');
 
   // Use a base URL that can change depending on the environment (local vs. production)
-  const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+  const API_BASE_URL = 'https://leaderboardbackend-one.vercel.app/api';
 
   useEffect(() => {
     fetchUsers();
@@ -22,7 +22,8 @@ export default function EnhancedLeaderboard() {
       const res = await axios.get(`${API_BASE_URL}/users`);
       setUsers(res.data);
     } catch (error) {
-      console.error("Error fetching users:", error);
+      console.error("Error fetching users:", error.message);
+      alert("Error fetching users: " + (error.response?.data?.message || error.message));
     }
   };
 
@@ -31,7 +32,8 @@ export default function EnhancedLeaderboard() {
       const res = await axios.get(`${API_BASE_URL}/leaderboard`);
       setLeaderboard(res.data);
     } catch (error) {
-      console.error("Error fetching leaderboard:", error);
+      console.error("Error fetching leaderboard:", error.message);
+      alert("Error fetching leaderboard: " + (error.response?.data?.message || error.message));
     }
   };
 
