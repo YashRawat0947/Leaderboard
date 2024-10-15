@@ -9,6 +9,9 @@ export default function EnhancedLeaderboard() {
   const [points, setPoints] = useState(null);
   const [newUser, setNewUser] = useState('');
 
+  // Use a base URL that can change depending on the environment (local vs. production)
+  const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+
   useEffect(() => {
     fetchUsers();
     fetchLeaderboard();
@@ -16,7 +19,7 @@ export default function EnhancedLeaderboard() {
 
   const fetchUsers = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/api/users");
+      const res = await axios.get(`${API_BASE_URL}/users`);
       setUsers(res.data);
     } catch (error) {
       console.error("Error fetching users:", error);
@@ -25,7 +28,7 @@ export default function EnhancedLeaderboard() {
 
   const fetchLeaderboard = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/api/leaderboard");
+      const res = await axios.get(`${API_BASE_URL}/leaderboard`);
       setLeaderboard(res.data);
     } catch (error) {
       console.error("Error fetching leaderboard:", error);
@@ -35,7 +38,7 @@ export default function EnhancedLeaderboard() {
   const handleClaimPoints = async () => {
     if (!selectedUser) return;
     try {
-      const res = await axios.post("http://localhost:5000/api/claim", {
+      const res = await axios.post(`${API_BASE_URL}/claim`, {
         userId: selectedUser,
       });
       setPoints(res.data.points);
@@ -48,10 +51,10 @@ export default function EnhancedLeaderboard() {
   const handleAddUser = async () => {
     if (!newUser.trim()) return;
     try {
-      await axios.post("http://localhost:5000/api/users", { name: newUser });
-      setNewUser(''); 
-      fetchUsers(); 
-      fetchLeaderboard(); 
+      await axios.post(`${API_BASE_URL}/users`, { name: newUser });
+      setNewUser('');
+      fetchUsers();
+      fetchLeaderboard();
     } catch (error) {
       console.error("Error adding user:", error);
     }
@@ -90,13 +93,13 @@ export default function EnhancedLeaderboard() {
               </span>
             </button>
           </div>
-          
+
           {points !== null && (
             <p className="text-center text-lg font-semibold text-green-600 mb-4">
               Points awarded: {points}
             </p>
           )}
-          
+
           <div className="mb-6">
             <h2 className="text-xl font-semibold text-gray-900 mb-2">Add User</h2>
             <div className="flex">
@@ -118,7 +121,7 @@ export default function EnhancedLeaderboard() {
               </button>
             </div>
           </div>
-          
+
           <div>
             <h2 className="text-xl font-semibold text-gray-900 mb-4">Leaderboard</h2>
             <ul className="divide-y divide-gray-200">
