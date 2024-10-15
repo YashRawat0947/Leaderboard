@@ -9,7 +9,6 @@ export default function EnhancedLeaderboard() {
   const [points, setPoints] = useState(null);
   const [newUser, setNewUser] = useState('');
 
-  // Use a base URL that can change depending on the environment (local vs. production)
   const API_BASE_URL = 'https://leaderboardbackend-one.vercel.app/api';
 
   useEffect(() => {
